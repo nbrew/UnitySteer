@@ -24,7 +24,7 @@ namespace UnitySteer.Behaviors
         /// <summary>
         /// Should the vehicle consider its own speed when approaching the quarry?
         /// </summary>
-        [SerializeField] private bool _slowDownOnApproach;
+        [SerializeField] private bool _slowDownOnApproach = false;
 
         [SerializeField] private DetectableObject _quarry;
 

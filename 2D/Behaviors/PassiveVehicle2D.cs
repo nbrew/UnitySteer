@@ -34,7 +34,7 @@ namespace UnitySteer2D.Behaviors
         /// A toggle to get the proper velocity vector.
         /// </summary>
         [SerializeField]
-        private bool _isBiped;
+        private bool _isBiped = false;
 
         private Vector2 _lastPosition = Vector2.zero;
 
