@@ -229,7 +229,7 @@ namespace UnitySteer.Behaviors
 #if ANNOTATE_AVOIDOBSTACLES
         private void OnDrawGizmos()
         {
-            if (Vehicle == null) return;
+            if (Vehicle == null || Vehicle.Radar == null) return;
             foreach (var o in Vehicle.Radar.Obstacles.Where(x => x != null))
             {
                 Gizmos.color = Color.red;
