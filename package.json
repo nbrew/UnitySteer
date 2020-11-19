@@ -1,0 +1,30 @@
+{
+  "name": "net.tnrd.unitysteer",
+  "displayName": "Unity Steer",
+  "version": "3.1.0",
+  "description": "UnitySteer is a toolkit to help build steering behaviors for autonomous agents in Unity.",
+  "unity": "2019.1",
+  "type": "tool",
+  "keywords": [
+    "steer",
+    "flock",
+    "flocking",
+    "boids",
+    "opensteer"
+  ],
+  "author": {
+    "email": "unity3d@tnrd.net",
+    "name": "TNRD",
+    "url": "https://www.tnrd.net"
+  },
+  "samples": [
+  	{
+  		"displayName":"2D",
+  		"path":"Samples~/2D"
+  	},
+  	{
+  		"displayName":"3D",
+  		"path":"Samples~/3D"
+  	}
+  ]
+}

@@ -4,9 +4,8 @@ using System;
 using System.Collections.Generic;
 using TickedPriorityQueue;
 using UnityEngine;
-using UnitySteer.Attributes;
 
-namespace UnitySteer2D.Behaviors
+namespace UnitySteer.Behaviors
 {
     /// <summary>
     /// Base class for radars
@@ -20,13 +19,13 @@ namespace UnitySteer2D.Behaviors
     /// AddDetectableObject on enable, and remove itself via RemoveDetectableObject
     /// on disable.
     /// </remarks>
-    [AddComponentMenu("UnitySteer2D/Tools/Radar")]
-    public class Radar2D : MonoBehaviour
+    [AddComponentMenu("UnitySteer/Radar/Radar")]
+    public class Radar : MonoBehaviour
     {
         #region Private static properties
 
-        private static IDictionary<int, DetectableObject2D> _knownDetectableObjects =
-            new SortedDictionary<int, DetectableObject2D>();
+        private static IDictionary<int, DetectableObject> _knownDetectableObjects =
+            new SortedDictionary<int, DetectableObject>();
 
         #endregion
 
@@ -36,7 +35,7 @@ namespace UnitySteer2D.Behaviors
         private TickedObject _tickedObject;
         private UnityTickedQueue _steeringQueue;
 
-        [SerializeField] private string _queueName = "Radar2D";
+        [SerializeField] private string _queueName = "Radar";
 
         /// <summary>
         /// The maximum number of radar update calls processed on the queue per update
@@ -64,10 +63,11 @@ namespace UnitySteer2D.Behaviors
 
         [SerializeField] private int _preAllocateSize = 30;
 
-        private Collider2D[] _detectedColliders;
-        private List<DetectableObject2D> _detectedObjects;
-        private List<Vehicle2D> _vehicles;
-        private List<DetectableObject2D> _obstacles;
+
+        private Collider[] _detectedColliders;
+        private List<DetectableObject> _detectedObjects;
+        private List<Vehicle> _vehicles;
+        private List<DetectableObject> _obstacles;
 
         #endregion
 
@@ -76,7 +76,7 @@ namespace UnitySteer2D.Behaviors
         /// <summary>
         /// List of currently detected neighbors
         /// </summary>
-        public IEnumerable<Collider2D> Detected
+        public IEnumerable<Collider> Detected
         {
             get { return _detectedColliders; }
         }
@@ -112,7 +112,7 @@ namespace UnitySteer2D.Behaviors
         /// <summary>
         /// List of obstacles detected by the radar
         /// </summary>
-        public List<DetectableObject2D> Obstacles
+        public List<DetectableObject> Obstacles
         {
             get { return _obstacles; }
         }
@@ -120,22 +120,22 @@ namespace UnitySteer2D.Behaviors
         /// <summary>
         /// Returns the radars position
         /// </summary>
-        public Vector2 Position
+        public Vector3 Position
         {
-            get { return (Vehicle != null) ? Vehicle.Position : (Vector2)_transform.position; }
+            get { return (Vehicle != null) ? Vehicle.Position : _transform.position; }
         }
 
-        public Action<Radar2D> OnDetected = delegate { };
+        public Action<Radar> OnDetected = delegate { };
 
         /// <summary>
         /// Gets the vehicle this radar is attached to
         /// </summary>
-        public Vehicle2D Vehicle { get; private set; }
+        public Vehicle Vehicle { get; private set; }
 
         /// <summary>
         /// List of vehicles detected among the colliders
         /// </summary>
-        public List<Vehicle2D> Vehicles
+        public List<Vehicle> Vehicles
         {
             get { return _vehicles; }
         }
@@ -149,15 +149,15 @@ namespace UnitySteer2D.Behaviors
             set { _layersChecked = value; }
         }
 
-#endregion
+        #endregion
 
-#region Static methods
+        #region Static methods
 
         /// <summary>
         /// Must be called when a detectable object is enabled so they can be easily identified
         /// </summary>
         /// <param name="obj">Detectable object</param>
-        public static void AddDetectableObject2D(DetectableObject2D obj)
+        public static void AddDetectableObject(DetectableObject obj)
         {
             _knownDetectableObjects[obj.Collider.GetInstanceID()] = obj;
         }
@@ -167,22 +167,22 @@ namespace UnitySteer2D.Behaviors
         /// </summary>
         /// <param name="obj">Detectable object</param>
         /// <returns>True if the call to Remove succeeded</returns>
-        public static bool RemoveDetectableObject2D(DetectableObject2D obj)
+        public static bool RemoveDetectableObject(DetectableObject obj)
         {
             return _knownDetectableObjects.Remove(obj.Collider.GetInstanceID());
         }
 
-#endregion
+        #endregion
 
-#region Methods
+        #region Methods
 
         protected virtual void Awake()
         {
-            Vehicle = GetComponent<Vehicle2D>();
+            Vehicle = GetComponent<Vehicle>();
             _transform = transform;
-            _vehicles = new List<Vehicle2D>(_preAllocateSize);
-            _obstacles = new List<DetectableObject2D>(_preAllocateSize);
-            _detectedObjects = new List<DetectableObject2D>(_preAllocateSize * 3);
+            _vehicles = new List<Vehicle>(_preAllocateSize);
+            _obstacles = new List<DetectableObject>(_preAllocateSize);
+            _detectedObjects = new List<DetectableObject>(_preAllocateSize * 3);
         }
 
 
@@ -206,14 +206,14 @@ namespace UnitySteer2D.Behaviors
 
         private void OnUpdateRadar(object obj)
         {
-            Profiler.BeginSample("OnUpdateRadar");
+            UnityEngine.Profiling.Profiler.BeginSample("OnUpdateRadar");
             _detectedColliders = Detect();
             FilterDetected();
             if (OnDetected != null)
             {
-                Profiler.BeginSample("Detection event handler");
+                UnityEngine.Profiling.Profiler.BeginSample("Detection event handler");
                 OnDetected(this);
-                Profiler.EndSample();
+                UnityEngine.Profiling.Profiler.EndSample();
             }
 #if TRACEDETECTED
 		if (DrawGizmos)
@@ -237,7 +237,7 @@ namespace UnitySteer2D.Behaviors
 			Debug.Log(sb.ToString());
 		}
 #endif
-            Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
 
         public void UpdateRadar()
@@ -245,9 +245,10 @@ namespace UnitySteer2D.Behaviors
             OnUpdateRadar(null);
         }
 
-        protected virtual Collider2D[] Detect()
+
+        protected virtual Collider[] Detect()
         {
-            return Physics2D.OverlapCircleAll(Position, DetectionRadius, LayersChecked);
+            return Physics.OverlapSphere(Position, DetectionRadius, LayersChecked);
         }
 
         protected virtual void FilterDetected()
@@ -264,14 +265,14 @@ namespace UnitySteer2D.Behaviors
 		 * took about 75% of the time used for the frame.
          * 
 		 */
-            Profiler.BeginSample("Base FilterDetected");
+            UnityEngine.Profiling.Profiler.BeginSample("Base FilterDetected");
 
             _vehicles.Clear();
             _obstacles.Clear();
             _detectedObjects.Clear();
 
 
-            Profiler.BeginSample("Initial detection");
+            UnityEngine.Profiling.Profiler.BeginSample("Initial detection");
             for (var i = 0; i < _detectedColliders.Length; i++)
             {
                 var id = _detectedColliders[i].GetInstanceID();
@@ -288,13 +289,13 @@ namespace UnitySteer2D.Behaviors
                     _detectedObjects.Add(detectable);
                 }
             }
-            Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
 
-            Profiler.BeginSample("Filtering out vehicles");
+            UnityEngine.Profiling.Profiler.BeginSample("Filtering out vehicles");
             for (var i = 0; i < _detectedObjects.Count; i++)
             {
                 var d = _detectedObjects[i];
-                var v = d as Vehicle2D;
+                var v = d as Vehicle;
                 if (v != null && (v.enabled || _detectDisabledVehicles))
                 {
                     _vehicles.Add(v);
@@ -304,18 +305,18 @@ namespace UnitySteer2D.Behaviors
                     _obstacles.Add(d);
                 }
             }
-            Profiler.EndSample();
-            Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
+            UnityEngine.Profiling.Profiler.EndSample();
         }
-#endregion
+        #endregion
 
-#region Unity methods
+        #region Unity methods
 
         private void OnDrawGizmos()
         {
             if (_drawGizmos)
             {
-                var pos = (Vehicle == null) ? (Vector2)transform.position : Vehicle.Position;
+                var pos = (Vehicle == null) ? transform.position : Vehicle.Position;
 
                 Gizmos.color = Color.cyan;
                 Gizmos.DrawWireSphere(pos, DetectionRadius);
@@ -330,6 +331,6 @@ namespace UnitySteer2D.Behaviors
             }
         }
 
-#endregion
+        #endregion
     }
 }
