@@ -29,7 +29,7 @@ namespace UnitySteer2D.Behaviors
         /// How far behind we should follow the target
         /// </summary>
         [SerializeField]
-        private Vector2 _distance;
+        private Vector2 _distance = Vector2.zero;
 
         /// <summary>
         /// The target.

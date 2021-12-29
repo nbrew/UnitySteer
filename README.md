@@ -1,4 +1,6 @@
-# UnitySteer 3.1
+# UnitySteer 3.1  
+
+[![Build Status](https://travis-ci.org/GandaG/UnitySteer.svg?branch=feature%2Ftravis_integration)](https://travis-ci.org/GandaG/UnitySteer)
 
 <p align="center">
 	<img alt="GitHub package.json version" src ="https://img.shields.io/github/package-json/v/Thundernerd/UnitySteer/upm" />
@@ -51,7 +53,7 @@ UnitySteer 3.1 requires Unity 5.x for 2D support. The last version to support Un
 
 ## Stable and beta versions
 
-The current stable release is UnitySteer 3.0 RC2.  It contains a significant number of improvements and fixes over 2.7, but it also introduced several breaking changes, so make sure you catch up with [the latest UnitySteer blogposts](http://arges-systems.com/blog/category/unitysteer/), as well as reading the [changelog](CHANGELOG.md).
+The current stable release is UnitySteer 3.0 RC2.  It contains a significant number of improvements and fixes over 2.7, but it also introduced several breaking changes, so make sure you catch up with [the latest UnitySteer blogposts](http://numergent.com/tags/unitysteer/), as well as reading the [changelog](CHANGELOG.md).
 
 I develop UnitySteer following git-flow, so if you're looking for a specific version, you can look at the project tags:
 

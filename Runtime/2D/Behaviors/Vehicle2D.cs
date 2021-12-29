@@ -93,7 +93,7 @@ namespace UnitySteer2D.Behaviors
         /// Should be set via the editor using an enum.
         /// </remarks>
         [SerializeField]
-        private SpriteForwardDirection _forward;
+        private SpriteForwardDirection _forward = SpriteForwardDirection.Up;
 
         #endregion
 

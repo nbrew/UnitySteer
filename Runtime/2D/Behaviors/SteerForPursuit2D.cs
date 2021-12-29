@@ -25,7 +25,7 @@ namespace UnitySteer2D.Behaviors
         /// <summary>
         /// Should the vehicle consider its own speed when approaching the quarry?
         /// </summary>
-        [SerializeField] private bool _slowDownOnApproach;
+        [SerializeField] private bool _slowDownOnApproach = false;
 
         [SerializeField] private Vehicle2D _quarry; //why detectableobject? Makes more sense to just make it a vehicle and so have access to the new Forward vector.
 

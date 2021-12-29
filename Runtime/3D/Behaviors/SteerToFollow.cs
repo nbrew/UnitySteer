@@ -26,7 +26,7 @@ namespace UnitySteer.Behaviors
         /// <summary>
         /// How far behind we should follow the target
         /// </summary>
-        [SerializeField] private Vector3 _distance;
+        [SerializeField] private Vector3 _distance = Vector3.zero;
 
 
         /// <summary>
